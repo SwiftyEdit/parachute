@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs / editors
+.idea/
+.vscode/
+*.iml
+
+# Runtime state - never part of the repository. data/ holds the plugin
+# database (backup history, audit log) and the BACKUPS THEMSELVES
+# (data/backups/*.zip - complete site data incl. the user database).
+# /data/ itself must stay (with .gitkeep) so PDO has a directory to write into.
+/data/*
+!/data/.gitkeep
+
+# Release build artifacts (attach to GitHub Releases instead of committing)
+/*.zip
+
+# Logs
+*.log
