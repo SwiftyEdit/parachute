@@ -18,6 +18,8 @@ if (!defined('PC_DATA')) {
     define('PC_DATA', SE_ROOT.'plugins/parachute/data/');
     define('PC_BACKUPS', PC_DATA.'backups/');
     define('PC_TMP', PC_DATA.'tmp/');
+    /* core SQLite files up to 2.3, merged into swiftyedit.sqlite3 since 2.4 */
+    define('PC_LEGACY_CORE_DBS', ['content.sqlite3', 'user.sqlite3', 'posts.sqlite3']);
 }
 
 /* -------------------------------------------------------------------
@@ -188,7 +190,7 @@ function pc_aes_supported(): bool {
 
 /**
  * Everything that can be backed up, grouped for the form. Item ids
- * ("db:content.sqlite3", "plugin:former", ...) are what the form posts and
+ * ("db:swiftyedit.sqlite3", "plugin:former", ...) are what the form posts and
  * what is stored in backups.sources - the paths themselves are always
  * rebuilt here and never taken from the request.
  *
@@ -220,8 +222,14 @@ function pc_sources(): array {
         } catch (\Throwable $e) {
         }
     }
+    $has_merged_db = is_file(SE_CONTENT.'/database/swiftyedit.sqlite3');
     foreach (glob(SE_CONTENT.'/database/*.sqlite3') ?: [] as $file) {
         $name = basename($file);
+        // core 2.4+ merged these into swiftyedit.sqlite3 - the old files stay
+        // until they are deleted in the settings, but are no longer used
+        if ($has_merged_db && in_array($name, PC_LEGACY_CORE_DBS, true)) {
+            continue;
+        }
         $items['db:'.$name] = ['label' => $name, 'paths' => [$file], 'default' => true];
     }
     $groups['core_db'] = ['label' => pc_lang('group_core_db'), 'hint' => pc_lang('hint_group_core_db'), 'items' => $items];
@@ -395,6 +403,12 @@ function pc_paths_size(array $paths): array {
 function pc_selected_ids(array $catalog): array {
     $last = json_decode((string) (pc_get_settings()['last_selection'] ?? ''), true);
     if (is_array($last) && $last) {
+        // a selection saved before core 2.4 names the three old core
+        // databases - they live on in swiftyedit.sqlite3 now
+        $legacy = array_map(fn($name) => 'db:'.$name, PC_LEGACY_CORE_DBS);
+        if (array_intersect($last, $legacy)) {
+            $last[] = 'db:swiftyedit.sqlite3';
+        }
         return array_values(array_intersect($last, array_keys($catalog)));
     }
     return array_keys(array_filter($catalog, fn($item) => !empty($item['default'])));

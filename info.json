@@ -3,8 +3,8 @@
     "id": "parachute",
     "name": "Parachute",
     "type": "plugin",
-    "version": "1.0.0",
-    "build": 1,
+    "version": "1.0.1",
+    "build": 2,
     "author": "SwiftyEdit Developer Team",
     "description": "Backups as downloadable ZIP files - databases, plugin data, uploads, configuration and themes, with consistent SQLite snapshots, optional AES-256 encryption and an audit log. Restricted to administrators with the sensitive-files permission.",
     "database": "parachute.sqlite3",
@@ -12,10 +12,10 @@
   },
   "versions": [
     {
-      "version": "1.0.0",
-      "build": 1,
+      "version": "1.0.1",
+      "build": 2,
       "requires_build": "26-0219",
-      "download_url": "https://github.com/SwiftyEdit/parachute/releases/download/v1.0.0/parachute-1.0.0.zip"
+      "download_url": "https://github.com/SwiftyEdit/parachute/releases/download/v1.0.1/parachute-1.0.1.zip"
     }
   ],
   "navigation": [
